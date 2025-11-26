@@ -1,227 +1,254 @@
 import streamlit as st
-import pandas as pd
-import random
+from PIL import Image
+import os
 
-# ────────────── Page Config & CSS ──────────────
-st.set_page_config(page_title="Tilandky 爆文煉金系統", layout="wide", page_icon="🏭")
-
-# 定義品牌色 (維持一致性)
-COLOR_PRIMARY = "#073B4C"
-COLOR_SECONDARY = "#118AB2"
-COLOR_BG = "#F1F5F9"
-
-st.markdown(
-    f"""<style>
-    .stApp {{
-        background-color: {COLOR_BG};
-        font-family: 'Noto Sans TC', sans-serif;
-    }}
-    
-    /* Header Style */
-    .header-box {{
-        background: linear-gradient(135deg, {COLOR_PRIMARY} 0%, {COLOR_SECONDARY} 100%);
-        padding: 2rem;
-        border-radius: 15px;
-        color: white;
-        text-align: center;
-        margin-bottom: 2rem;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-    }}
-    
-    /* Process Cards */
-    .process-card {{
-        background-color: white;
-        padding: 20px;
-        border-radius: 10px;
-        border-left: 5px solid {COLOR_SECONDARY};
-        box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-        margin-bottom: 15px;
-    }}
-    
-    /* Output Box */
-    .output-box {{
-        background-color: #fff;
-        border: 2px dashed {COLOR_PRIMARY};
-        padding: 25px;
-        border-radius: 10px;
-        margin-top: 20px;
-    }}
-    
-    h3 {{ color: {COLOR_PRIMARY}; }}
-    </style>""",
-    unsafe_allow_html=True,
+# --- 頁面設定 ---
+st.set_page_config(
+    page_title="Tru-Mi 聖誕企劃 | 故事淬鍊邀請函",
+    page_icon="🎁",
+    layout="centered", # 使用置中布局聚焦內容
+    initial_sidebar_state="collapsed"
 )
 
-# ────────────── Data: T.R.U.S.T. Logic ──────────────
+# --- 自定義 CSS 樣式 ---
+# 這裡打造聖誕與高級感的視覺風格 (深紅、金色、奶油色調)
+st.markdown("""
+    <style>
+        /* 全局字體與背景 */
+        .stApp {
+            background-color: #FDFBF7; /* 溫暖的奶油米色背景 */
+            color: #3E2723; /* 深咖啡色文字 */
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+        }
+        
+        /* 主標題樣式 */
+        .main-title {
+            font-size: 2.8rem !important;
+            font-weight: 700;
+            color: #8E2121; /* 聖誕深紅色 */
+            text-align: center;
+            line-height: 1.3;
+            margin-bottom: 1rem;
+        }
+        
+        /* 副標題樣式 */
+        .sub-title {
+            font-size: 1.3rem !important;
+            font-weight: 400;
+            color: #5D4037;
+            text-align: center;
+            margin-bottom: 2.5rem;
+        }
+        
+        /* 強調文字 (金色) */
+        .gold-highlight {
+            color: #B8860B; /* 金色 */
+            font-weight: bold;
+        }
+        
+        /* 章節標題樣式 */
+        h2 {
+            color: #8E2121 !important;
+            border-bottom: 2px solid #D4AF37; /* 金色底線 */
+            padding-bottom: 10px;
+            margin-top: 3rem !important;
+        }
+        
+        /* CTA 按鈕樣式優化 (Streamlit原生按鈕限制較多，這邊用CSS輔助視覺) */
+        .stButton button {
+            background-color: #8E2121 !important;
+            color: white !important;
+            font-size: 1.2rem !important;
+            font-weight: bold !important;
+            padding: 0.8rem 2rem !important;
+            border-radius: 30px !important;
+            border: none !important;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+        }
+        .stButton button:hover {
+           background-color: #A52A2A !important;
+           transform: translateY(-2px);
+        }
+        
+        /* 資訊方塊樣式 */
+        div[data-testid="stMetricValue"] {
+            font-size: 1.4rem !important;
+            color: #8E2121 !important;
+        }
+        
+        /* 列表樣式調整 */
+        ul {
+            list-style-type: none; /* 移除預設圓點 */
+            padding-left: 0;
+        }
+        li {
+            margin-bottom: 1.2rem;
+            padding-left: 1.5rem;
+            text-indent: -1.5rem;
+        }
+        li:before {
+            content: "✨"; /* 使用星星代替圓點 */
+            padding-right: 10px;
+            color: #B8860B;
+        }
+    </style>
+""", unsafe_allow_html=True)
 
-# 濾鏡思維庫
-reframing_lenses = {
-    "工程師邏輯 (Debug)": {
-        "desc": "將情緒問題轉化為「系統 Bug」或「流程錯誤」。",
-        "keywords": ["SOP", "Debug", "底層代碼", "系統當機", "迴圈", "效能優化", "專案管理"],
-        "example": "老公不洗碗 → 家務專案的權責劃分不清 (Permission Denied)。"
-    },
-    "資安顧問視角 (Security)": {
-        "desc": "將心理界線轉化為「防火牆」或「病毒防護」。",
-        "keywords": ["防火牆", "病毒入侵", "安全憑證", "漏洞", "權限設定", "攻擊防禦"],
-        "example": "被婆婆情緒勒索 → 妳的能量防火牆 (Firewall) 出現漏洞。"
-    },
-    "男性視角 (Translation)": {
-        "desc": "翻譯男人的腦袋，用男性的理性同理女性的感性。",
-        "keywords": ["單執行緒", "CPU過熱", "待機模式", "邏輯運算", "狩獵本能"],
-        "example": "老公發呆聽不到 → 他的 CPU 過熱，正在強制降溫，不是不愛妳。"
-    }
-}
+# --- 變數設定 (請在此替換實際資訊) ---
+# 注意：連結現在應該指向您的「預約諮詢系統」（例如 Calendly, Google 表單, 或 Line 官方帳號連結）
+CTA_LINK = "https://your-consultation-booking-link.com" # [請替換您的實際諮詢預約連結]
 
-# 內容分類庫
-trust_categories = {
-    "T - 共鳴型 (Truth)": {"goal": "導流、漲粉", "hook": "天啊！這就是在說我！"},
-    "R - 觀點型 (Reframe)": {"goal": "建立權威", "hook": "原來這不是我的錯，是系統問題！"},
-    "U - 關係型 (Union)": {"goal": "增加黏著度", "hook": "我想和他一起變好。"},
-    "S - 乾貨型 (Strategy)": {"goal": "收藏、轉發", "hook": "這招太實用了，先存起來！"},
-    "T - 見證型 (Transformation)": {"goal": "轉化成交", "hook": "如果她可以，我也想要這種改變。"}
-}
+# --- 頁面內容開始 ---
 
-# 標題公式庫
-title_formulas = {
-    "A. 工程師理性分析": [
-        "工程師觀察：為什麼 80% 的{痛點}，都是因為「{工程名詞}」錯誤？",
-        "別再{痛點}了！用工程師的「{工程名詞}」思維，三步驟解決。",
-        "家庭系統崩潰？因為妳忽略了這個關鍵的「{工程名詞}」。"
-    ],
-    "B. 資安顧問警示": [
-        "資安警告：妳的「{資安名詞}」過期了嗎？3個徵兆檢測{痛點}。",
-        "別讓情緒病毒入侵！資安顧問教妳建立最強「{資安名詞}」。",
-        "停止自我攻擊！妳正在遭遇內在的「{資安名詞}」危機。"
-    ],
-    "C. 男性溫柔反差": [
-        "作為男人我說實話：其實老公{行為}，是因為{男性機制}。",
-        "給老婆的說明書：當男人{行為}時，其實他在想什麼？",
-        "不需要通靈！用男人的邏輯，秒懂為什麼他總是{痛點}。"
-    ]
-}
+# ==========================================
+# Section I. 頂部主標與核心價值 (Hook & Value)
+# ==========================================
+st.markdown('<div class="main-title">🎯 別再送「商品」了。<br>送一份「永恆的故事」</div>', unsafe_allow_html=True)
+st.markdown('<div class="sub-title">妳的愛情，值得一份不會錯過、也不會被遺忘的禮物。<br>視覺重點：妳精心準備的<span class="gold-highlight">【故事淬鍊邀請函】</span>實體珍藏盒。</div>', unsafe_allow_html=True)
 
-# ────────────── Sidebar ──────────────
-st.sidebar.header("⚙️ 系統設定")
-st.sidebar.info("歡迎回到 Tilandky 內容工廠。請依照 SOP 產出您的爆文。")
-if st.sidebar.button("清除重來"):
-    st.rerun()
+# 置放產品主圖的區域
+hero_image_path = "hero_image.jpg" # 請確保目錄下有這張圖片
+if os.path.exists(hero_image_path):
+    st.image(hero_image_path, use_column_width=True, caption="Tru-Mi 聖誕限定：故事淬鍊邀請函珍藏禮盒")
+else:
+    # 如果沒有圖片的替代顯示方案
+    st.info("（請確認 hero_image.jpg 已放入專案資料夾中）", icon="📸")
+    st.markdown("---")
 
-# ────────────── Main Interface ──────────────
 
-# Header
-st.markdown(
-    """
-    <div class="header-box">
-        <h1>🏭 T.R.U.S.T. 爆文生產流水線</h1>
-        <p>Input: 真實痛點 ➡ Process: 工程師濾鏡 ➡ Output: 高價值內容</p>
+# 引言段落
+st.markdown("""
+    <div style="text-align: center; font-size: 1.1rem; line-height: 1.8; margin: 2rem 0; padding: 1.5rem; background-color: #F8F0E3; border-radius: 15px;">
+    妳是否也厭倦了每年聖誕節，尋找一份「有意義」的禮物？<br>
+    Tru-Mi 相信，最珍貴的愛，值得最久的時間淬鍊。<br>
+    今年聖誕，我們送出的不是冰冷的成品，而是一份<br>
+    <strong style="font-size: 1.3rem; color: #8E2121;">「共同創作的永恆承諾」</strong>。
     </div>
-    """, 
-    unsafe_allow_html=True
-)
+""", unsafe_allow_html=True)
 
-# Stage 1: Source the Truth
-st.subheader("1️⃣ 第一階段：礦場挖掘 (Source)")
-st.markdown('<div class="process-card">', unsafe_allow_html=True)
-col1, col2 = st.columns([3, 1])
+
+# ==========================================
+# Section II. 禮物內容與儀式感 (Product Reframed)
+# ==========================================
+st.header("II. 禮物內容與儀式感")
+st.subheader("🎁 妳在 12/25 當天送出的是：【故事淬鍊邀請函】")
+st.write("這份禮盒，是開啟一段珍貴旅程的實體憑證與專屬儀式：")
+
+st.markdown("") # 空行間距
+
+col1, col2 = st.columns(2, gap="large")
+
 with col1:
-    raw_pain = st.text_input("輸入客戶痛點 (Input)", placeholder="例如：老公回家只會滑手機，都不幫忙...")
-    st.caption("🔍 檢核點：這個問題是否讓她們「睡不著覺」？是否有強烈的帶入感？")
+    st.markdown("""
+    <ul>
+        <li><strong>獨家珍藏禮盒</strong><br>一個重磅、高質感、可長久珍藏的 keepsake box。</li>
+        <li><strong>故事收藏憑證卡</strong><br>妳為摯愛預定一趟 [60-90分鐘] 深度故事諮詢的證明。</li>
+    </ul>
+    """, unsafe_allow_html=True)
+    # 這裡使用外部 icon連結
+    st.image("https://img.icons8.com/ios/50/8E2121/gift-box.png", width=40)
+
 with col2:
-    pain_keyword = st.text_input("提煉 1 個關鍵字", placeholder="例如：偽單親")
-st.markdown('</div>', unsafe_allow_html=True)
+    st.markdown("""
+    <ul>
+        <li><strong>Jessica 的親筆歡迎信</strong><br>來自妳（珠寶故事收藏家）的問候，賦予禮物情感溫度。</li>
+        <li><strong>預約啟動 QR Code</strong><br>導向專屬預約系統，讓收禮人隨時啟動她的旅程，無時間壓力。</li>
+    </ul>
+    """, unsafe_allow_html=True)
+    st.image("https://img.icons8.com/ios/50/8E2121/qr-code--v1.png", width=40)
 
-if raw_pain and pain_keyword:
-    
-    # Stage 2: The Engineer's Reframe
-    st.subheader("2️⃣ 第二階段：濾鏡加工 (Reframe)")
-    st.markdown('<div class="process-card">', unsafe_allow_html=True)
-    
-    lens_type = st.radio("選擇您的加工濾鏡：", list(reframing_lenses.keys()), horizontal=True)
-    selected_lens = reframing_lenses[lens_type]
-    
-    st.info(f"💡 **濾鏡思維**：{selected_lens['desc']}\n\n📝 **參考詞彙**：{', '.join(selected_lens['keywords'])}")
-    
-    col_r1, col_r2 = st.columns(2)
-    with col_r1:
-        st.write(f"**❌ 一般視角 (抱怨)：** {raw_pain}")
-    with col_r2:
-        reframe_idea = st.text_area(f"**✅ Tilandky 視角 ({lens_type})：**", placeholder=f"例如：這不是態度問題，這是{selected_lens['keywords'][0]}設定錯誤...")
-    
-    st.markdown('</div>', unsafe_allow_html=True)
+st.markdown("---")
 
-    if reframe_idea:
-        
-        # Stage 3: Categorize
-        st.subheader("3️⃣ 第三階段：內容定位 (Categorize)")
-        st.markdown('<div class="process-card">', unsafe_allow_html=True)
-        
-        category = st.selectbox("選擇這篇貼文的戰略目的：", list(trust_categories.keys()))
-        cat_details = trust_categories[category]
-        st.success(f"🎯 **目標**：{cat_details['goal']} | 🎣 **鉤子**：{cat_details['hook']}")
-        
-        st.markdown('</div>', unsafe_allow_html=True)
+# ==========================================
+# Section III. 購買前的兩大焦慮與保證 (Handling Objections)
+# ==========================================
+st.header("III. 購買前的兩大焦慮與保證")
+st.write("我們知道，送一份特別的禮物，妳心裡總有一些擔心。Tru-Mi 為妳解決痛點：")
 
-        # Stage 4: Viral Titles
-        st.subheader("4️⃣ 第四階段：標題工程 (Viral Titles)")
-        st.markdown('<div class="process-card">', unsafe_allow_html=True)
-        
-        # 自動生成標題建議
-        st.write("🤖 **系統自動運算的標題建議：**")
-        
-        # 準備填入變數
-        tech_term = selected_lens['keywords'][0] # 取第一個關鍵字當預設
-        
-        generated_titles = []
-        
-        if "工程師" in lens_type:
-            formulas = title_formulas["A. 工程師理性分析"]
-            for f in formulas:
-                generated_titles.append(f.replace("{痛點}", pain_keyword).replace("{工程名詞}", tech_term))
-        elif "資安" in lens_type:
-            formulas = title_formulas["B. 資安顧問警示"]
-            for f in formulas:
-                generated_titles.append(f.replace("{痛點}", pain_keyword).replace("{資安名詞}", tech_term))
-        else: # 男性視角
-            formulas = title_formulas["C. 男性溫柔反差"]
-            for f in formulas:
-                generated_titles.append(f.replace("{行為}", pain_keyword).replace("{男性機制}", tech_term).replace("{痛點}", pain_keyword))
-        
-        # 顯示生成的標題
-        final_title = st.radio("請選擇一個標題 (或作為靈感)：", generated_titles)
-        
-        st.markdown('</div>', unsafe_allow_html=True)
+st.markdown("") # 空行間距
 
-        # Stage 5: Final Output & Monetization
-        st.divider()
-        st.subheader("🚀 最終產出：爆文草稿")
-        
-        cta_text = """
-        ---
-        我是 Tilandky，用工程師邏輯陪妳聊出內在力量。
-        如果妳也卡在這個「系統 Bug」裡出不來...
-        
-        👉 **點擊主頁連結，預約 20 分鐘「前導邏輯診斷」**
-        讓我幫妳找出那個卡住妳的程式碼，重啟妳的人生系統。
-        """
-        
-        st.markdown(
-            f"""
-            <div class="output-box">
-                <h3>{final_title}</h3>
-                <p><strong>(圖片建議：{pain_keyword} 的情境圖 + 工程師風格文字壓字)</strong></p>
-                <br>
-                <p>{raw_pain}</p>
-                <p>很多媽媽問我怎麼辦？</p>
-                <p>其實，如果我們用<strong>「{lens_type}」</strong>來看，這根本不是妳的問題...</p>
-                <p><strong>{reframe_idea}</strong></p>
-                <br>
-                <p>(在此處展開您的 {category.split(' - ')[1]} 內容...)</p>
-                <br>
-                {cta_text.replace(chr(10), '<br>')}
-            </div>
-            """, 
-            unsafe_allow_html=True
-        )
-        
-        st.caption("💡 提示：請將上方內容複製到 Notion 或 Instagram 發布工具中。")
+col_ob1, col_ob2 = st.columns(2)
+
+with col_ob1:
+    with st.container(border=True):
+        st.markdown("#### 😟 焦慮 1：怕買錯 / 不合她意")
+        st.metric(label="Tru-Mi 的承諾", value="零風險承諾")
+        st.markdown("""
+        這份禮物是**「讓她 100% 滿意」**的承諾。<br>
+        妳送的是「決定權」與「共同設計」，妳不會買錯！
+        <br><br>
+        <span class="gold-highlight">💡 策略關鍵：送的是體驗，不是物品。</span>
+        """, unsafe_allow_html=True)
+
+with col_ob2:
+    with st.container(border=True):
+        st.markdown("#### 😟 焦慮 2：萬一她很忙 / 怕拖太久")
+        st.metric(label="Tru-Mi 的承諾", value="無限期承諾")
+        st.markdown("""
+        **憑證無使用期限**。<br>
+        收禮人可以在她/他最放鬆、最有靈感的時候，隨時向妳兌現這個禮物。
+        <br><br>
+        <span class="gold-highlight">💡 策略關鍵：給予「時間自由」(Marry 最看重的價值)。</span>
+        """, unsafe_allow_html=True)
+
+
+# ==========================================
+# Section V. 預約諮詢與行動呼籲 (Consultation & CTA)
+# ==========================================
+st.header("V. 預約諮詢與行動呼籲")
+
+# --- 改用「諮詢引導」取代「價格顯示」 ---
+st.markdown("""
+    <div style="text-align: center; padding: 30px 20px; background-color: #FDF3F3; border-radius: 15px; margin-bottom: 30px;">
+        <h3 style="margin-top:0; color: #8E2121;">💎 每一份愛，都值得專屬對待</h3>
+        <p style="font-size: 1.1rem; line-height: 1.6; color: #5D4037;">
+            Tru-Mi 深知，您的故事與預算是獨一無二的。<br>
+            因此，我們不設定標準定價。
+        </p>
+        <p style="font-size: 1.2rem; font-weight: bold; color: #B8860B; margin: 20px 0;">
+            誠摯邀請您預約一次與設計師 Jessica 的深度諮詢。
+        </p>
+        <p style="font-size: 1rem; color: #666;">
+            讓我們透過對話，了解您的需求，<br>為您量身打造最適合的「故事淬鍊」方案。
+        </p>
+    </div>
+""", unsafe_allow_html=True)
+
+# 期限與重要提醒區塊
+col_alert1, col_alert2 = st.columns(2)
+with col_alert1:
+    st.error("⏰ **聖誕限定：最後收單日**\n\n**2025 年 12 月 25 日**\n\n(為了確保聖誕節前拿到禮盒，請盡早預約諮詢)")
+
+with col_alert2:
+    st.warning("⚠️ **重要提醒**\n\n禮盒保證於 12/24 前寄達。\n\n最終首飾將於收禮人確認設計後 **4-12 週**交付。")
+
+st.markdown("") # 空行間距
+
+# 最終 CTA 區塊
+st.markdown("""
+    <div style="text-align: center; margin-top: 3rem;">
+        <h3 style="color: #8E2121;">👉 立即啟動聖誕故事</h3>
+        <p>別讓今年的心意，又變成一份普通的禮物。<br>先聊聊，再決定。</p>
+    </div>
+""", unsafe_allow_html=True)
+
+# 創建一個置中的按鈕容器
+col_cta_spacer1, col_cta, col_cta_spacer2 = st.columns([1, 2, 1])
+
+with col_cta:
+    # 使用 st.link_button 直接導向外部連結
+    # 按鈕文字已更新為「預約諮詢」
+    st.link_button(
+        label="🎄 預約「專屬方案諮詢」 (開啟故事旅程)",
+        url=CTA_LINK,
+        type="primary",
+        use_container_width=True
+    )
+
+# 頁尾
+st.markdown("""
+    <div style="text-align: center; margin-top: 5rem; font-size: 0.8rem; color: #999;">
+        © 2023-2025 Tru-Mi Jewelry. All Rights Reserved.
+    </div>
+""", unsafe_allow_html=True)
