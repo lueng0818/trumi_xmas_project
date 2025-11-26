@@ -108,9 +108,9 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# --- 變數設定 (請在此替換實際資訊) ---
-# 注意：連結現在應該指向您的「預約諮詢系統」（例如 Calendly, Google 表單, 或 Line 官方帳號連結）
-CTA_LINK = "https://line.me/R/ti/p/@your_line_id" # [請替換您的實際 Line@ 連結]
+# --- 變數設定 ---
+# 更新 Line@ 連結為新的 ID
+CTA_LINK = "https://line.me/R/ti/p/@3303nksbt"
 
 # --- 頁面內容開始 ---
 
@@ -163,17 +163,21 @@ with col1:
     st.image("https://img.icons8.com/ios/50/00563F/gift-box.png", width=40)
 
 with col2:
+    # 修正：確保 <ul> 標籤正確包覆所有 <li> 項目並在結束時關閉
     st.markdown("""
     <ul>
         <li><strong>Jessica 的親筆歡迎信</strong><br>來自妳（珠寶故事收藏家）的問候，賦予禮物情感溫度。</li>
         <li><strong>預約啟動 QR Code</strong><br>導向專屬預約系統，讓收禮人隨時啟動她的旅程，無時間壓力。</li>
     </ul>
-    """)
+    """, unsafe_allow_html=True)
     
-    # --- 修改處：顯示真實的 QR Code 圖片 ---
+    # --- QR Code 圖片顯示邏輯 ---
+    # 這部分程式碼應該在 st.markdown 結束後執行，確保圖片顯示在文字列表下方
     qr_code_path = "qr_code.png" # 請確保目錄下有這張圖片
     if os.path.exists(qr_code_path):
         # 顯示 QR Code，寬度設為 120px 以便掃描
+        # 加入一個小的上邊距，讓圖片與文字保持距離
+        st.markdown("<div style='margin-top: 15px;'></div>", unsafe_allow_html=True)
         st.image(qr_code_path, width=120, caption="掃描加入 Tru-Mi Line@ 預約")
     else:
         # 如果沒有圖片的替代顯示方案
@@ -262,6 +266,7 @@ col_cta_spacer1, col_cta, col_cta_spacer2 = st.columns([1, 2, 1])
 
 with col_cta:
     # 使用 st.link_button 直接導向外部連結
+    # 連結已更新為新的 Line@ ID
     st.link_button(
         label="🎄 預約「專屬方案諮詢」 (開啟故事旅程)",
         url=CTA_LINK,
