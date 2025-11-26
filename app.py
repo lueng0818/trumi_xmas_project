@@ -110,7 +110,7 @@ st.markdown("""
 
 # --- 變數設定 ---
 # 更新 Line@ 連結為新的 ID
-CTA_LINK = "https://line.me/R/ti/p/@3303nksbt"
+CTA_LINK = "https://line.me/R/ti/p/%40303nksbt"
 
 # --- 頁面內容開始 ---
 
@@ -280,3 +280,4 @@ st.markdown("""
         © 2023-2025 Tru-Mi Jewelry. All Rights Reserved.
     </div>
 """, unsafe_allow_html=True)
+
