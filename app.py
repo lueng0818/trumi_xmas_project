@@ -110,7 +110,7 @@ st.markdown("""
 
 # --- 變數設定 (請在此替換實際資訊) ---
 # 注意：連結現在應該指向您的「預約諮詢系統」（例如 Calendly, Google 表單, 或 Line 官方帳號連結）
-CTA_LINK = "https://line.me/R/ti/p/%40303nksbt" # [請替換您的實際諮詢預約連結]
+CTA_LINK = "https://line.me/R/ti/p/@your_line_id" # [請替換您的實際 Line@ 連結]
 
 # --- 頁面內容開始 ---
 
@@ -168,8 +168,17 @@ with col2:
         <li><strong>Jessica 的親筆歡迎信</strong><br>來自妳（珠寶故事收藏家）的問候，賦予禮物情感溫度。</li>
         <li><strong>預約啟動 QR Code</strong><br>導向專屬預約系統，讓收禮人隨時啟動她的旅程，無時間壓力。</li>
     </ul>
-    """, unsafe_allow_html=True)
-    st.image("https://img.icons8.com/ios/50/00563F/qr-code--v1.png", width=40)
+    """)
+    
+    # --- 修改處：顯示真實的 QR Code 圖片 ---
+    qr_code_path = "qr_code.png" # 請確保目錄下有這張圖片
+    if os.path.exists(qr_code_path):
+        # 顯示 QR Code，寬度設為 120px 以便掃描
+        st.image(qr_code_path, width=120, caption="掃描加入 Tru-Mi Line@ 預約")
+    else:
+        # 如果沒有圖片的替代顯示方案
+        st.info("（請確認 qr_code.png 已放入專案資料夾中）", icon="📱")
+
 
 st.markdown("---")
 
@@ -184,7 +193,8 @@ st.markdown("") # 空行間距
 col_ob1, col_ob2 = st.columns(2)
 
 with col_ob1:
-    with st.container(border=True):
+    # 移除 st.container(border=True) 以避免舊版 Streamlit 報錯
+    with st.container():
         st.markdown("#### 😟 焦慮 1：怕買錯 / 不合她意")
         st.metric(label="Tru-Mi 的承諾", value="零風險承諾")
         st.markdown("""
@@ -195,7 +205,8 @@ with col_ob1:
         """, unsafe_allow_html=True)
 
 with col_ob2:
-    with st.container(border=True):
+    # 移除 st.container(border=True) 以避免舊版 Streamlit 報錯
+    with st.container():
         st.markdown("#### 😟 焦慮 2：萬一她很忙 / 怕拖太久")
         st.metric(label="Tru-Mi 的承諾", value="無限期承諾")
         st.markdown("""
@@ -264,5 +275,3 @@ st.markdown("""
         © 2023-2025 Tru-Mi Jewelry. All Rights Reserved.
     </div>
 """, unsafe_allow_html=True)
-
-
