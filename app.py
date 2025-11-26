@@ -110,7 +110,7 @@ st.markdown("""
 
 # --- 變數設定 (請在此替換實際資訊) ---
 # 注意：連結現在應該指向您的「預約諮詢系統」（例如 Calendly, Google 表單, 或 Line 官方帳號連結）
-CTA_LINK = "https://www.tru-mi.com/line-contact" # [請替換您的實際諮詢預約連結]
+CTA_LINK = "https://line.me/R/ti/p/%40303nksbt" # [請替換您的實際諮詢預約連結]
 
 # --- 頁面內容開始 ---
 
@@ -264,4 +264,5 @@ st.markdown("""
         © 2023-2025 Tru-Mi Jewelry. All Rights Reserved.
     </div>
 """, unsafe_allow_html=True)
+
 
