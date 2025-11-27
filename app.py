@@ -10,13 +10,14 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-# --- 自定義 CSS 樣式 (配色更新為 Tru-Mi 品牌色) ---
+# --- 自定義 CSS 樣式 ---
+# 這裡打造聖誕與高級感的視覺風格 (深紅、金色、奶油色調)
 st.markdown("""
     <style>
         /* 全局字體與背景 */
         .stApp {
-            background-color: #FDFBF7; /* 品牌米奶油色背景 */
-            color: #333333; /* 深炭灰色文字，取代原本的深咖啡色 */
+            background-color: #FDFBF7; /* 溫暖的奶油米色背景 */
+            color: #3E2723; /* 深咖啡色文字 */
             font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
         }
         
@@ -24,7 +25,7 @@ st.markdown("""
         .main-title {
             font-size: 2.8rem !important;
             font-weight: 700;
-            color: #00563F; /* Tru-Mi 深祖母綠 */
+            color: #8E2121; /* 聖誕深紅色 */
             text-align: center;
             line-height: 1.3;
             margin-bottom: 1rem;
@@ -34,28 +35,28 @@ st.markdown("""
         .sub-title {
             font-size: 1.3rem !important;
             font-weight: 400;
-            color: #555555; /* 中灰色 */
+            color: #5D4037;
             text-align: center;
             margin-bottom: 2.5rem;
         }
         
-        /* 強調文字 (品牌金) */
+        /* 強調文字 (金色) */
         .gold-highlight {
-            color: #C99E10; /* Tru-Mi 品牌金 */
+            color: #B8860B; /* 金色 */
             font-weight: bold;
         }
         
         /* 章節標題樣式 */
         h2 {
-            color: #00563F !important; /* Tru-Mi 深祖母綠 */
-            border-bottom: 2px solid #C99E10; /* 品牌金底線 */
+            color: #8E2121 !important;
+            border-bottom: 2px solid #D4AF37; /* 金色底線 */
             padding-bottom: 10px;
             margin-top: 3rem !important;
         }
         
-        /* CTA 按鈕樣式優化 */
+        /* CTA 按鈕樣式優化 (Streamlit原生按鈕限制較多，這邊用CSS輔助視覺) */
         .stButton button {
-            background-color: #00563F !important; /* Tru-Mi 深祖母綠 */
+            background-color: #8E2121 !important;
             color: white !important;
             font-size: 1.2rem !important;
             font-weight: bold !important;
@@ -66,19 +67,19 @@ st.markdown("""
             transition: all 0.3s ease;
         }
         .stButton button:hover {
-           background-color: #003A2B !important; /* 按鈕懸停時的深綠色 */
+           background-color: #A52A2A !important;
            transform: translateY(-2px);
         }
         
-        /* 資訊方塊樣式 (Metric) */
+        /* 資訊方塊樣式 */
         div[data-testid="stMetricValue"] {
             font-size: 1.4rem !important;
-            color: #00563F !important; /* Tru-Mi 深祖母綠 */
+            color: #8E2121 !important;
         }
         
         /* 列表樣式調整 */
         ul {
-            list-style-type: none;
+            list-style-type: none; /* 移除預設圓點 */
             padding-left: 0;
         }
         li {
@@ -87,30 +88,16 @@ st.markdown("""
             text-indent: -1.5rem;
         }
         li:before {
-            content: "✨";
+            content: "✨"; /* 使用星星代替圓點 */
             padding-right: 10px;
-            color: #C99E10; /* 品牌金圖示 */
+            color: #B8860B;
         }
-
-        /* 引言與諮詢區塊背景色微調 */
-        .quote-box, .consultation-box {
-            background-color: #F2F7F4; /* 極淺的綠色調背景，呼應品牌 */
-            border-radius: 15px;
-            padding: 1.5rem;
-            text-align: center;
-            line-height: 1.8;
-            margin: 2rem 0;
-        }
-        .consultation-box h3 {
-            color: #00563F; /* 深祖母綠標題 */
-        }
-
     </style>
 """, unsafe_allow_html=True)
 
-# --- 變數設定 ---
-# 更新 Line@ 連結為新的 ID
-CTA_LINK = "https://line.me/R/ti/p/%40303nksbt"
+# --- 變數設定 (請在此替換實際資訊) ---
+# 注意：連結現在應該指向您的「預約諮詢系統」（例如 Calendly, Google 表單, 或 Line 官方帳號連結）
+CTA_LINK = "https://your-consultation-booking-link.com" # [請替換您的實際諮詢預約連結]
 
 # --- 頁面內容開始 ---
 
@@ -132,11 +119,11 @@ else:
 
 # 引言段落
 st.markdown("""
-    <div class="quote-box" style="font-size: 1.1rem;">
+    <div style="text-align: center; font-size: 1.1rem; line-height: 1.8; margin: 2rem 0; padding: 1.5rem; background-color: #F8F0E3; border-radius: 15px;">
     妳是否也厭倦了每年聖誕節，尋找一份「有意義」的禮物？<br>
     Tru-Mi 相信，最珍貴的愛，值得最久的時間淬鍊。<br>
     今年聖誕，我們送出的不是冰冷的成品，而是一份<br>
-    <strong style="font-size: 1.3rem; color: #00563F;">「共同創作的永恆承諾」</strong>。
+    <strong style="font-size: 1.3rem; color: #8E2121;">「共同創作的永恆承諾」</strong>。
     </div>
 """, unsafe_allow_html=True)
 
@@ -159,30 +146,17 @@ with col1:
         <li><strong>故事收藏憑證卡</strong><br>妳為摯愛預定一趟 [60-90分鐘] 深度故事諮詢的證明。</li>
     </ul>
     """, unsafe_allow_html=True)
-    # 這裡使用外部 icon連結 (顏色已替換為品牌綠)
-    st.image("https://img.icons8.com/ios/50/00563F/gift-box.png", width=40)
+    # 這裡使用外部 icon連結
+    st.image("https://img.icons8.com/ios/50/8E2121/gift-box.png", width=40)
 
 with col2:
-    # 修正：確保 <ul> 標籤正確包覆所有 <li> 項目並在結束時關閉
     st.markdown("""
     <ul>
         <li><strong>Jessica 的親筆歡迎信</strong><br>來自妳（珠寶故事收藏家）的問候，賦予禮物情感溫度。</li>
         <li><strong>預約啟動 QR Code</strong><br>導向專屬預約系統，讓收禮人隨時啟動她的旅程，無時間壓力。</li>
     </ul>
     """, unsafe_allow_html=True)
-    
-    # --- QR Code 圖片顯示邏輯 ---
-    # 這部分程式碼應該在 st.markdown 結束後執行，確保圖片顯示在文字列表下方
-    qr_code_path = "qr_code.png" # 請確保目錄下有這張圖片
-    if os.path.exists(qr_code_path):
-        # 顯示 QR Code，寬度設為 120px 以便掃描
-        # 加入一個小的上邊距，讓圖片與文字保持距離
-        st.markdown("<div style='margin-top: 15px;'></div>", unsafe_allow_html=True)
-        st.image(qr_code_path, width=120, caption="掃描加入 Tru-Mi Line@ 預約")
-    else:
-        # 如果沒有圖片的替代顯示方案
-        st.info("（請確認 qr_code.png 已放入專案資料夾中）", icon="📱")
-
+    st.image("https://img.icons8.com/ios/50/8E2121/qr-code--v1.png", width=40)
 
 st.markdown("---")
 
@@ -197,8 +171,7 @@ st.markdown("") # 空行間距
 col_ob1, col_ob2 = st.columns(2)
 
 with col_ob1:
-    # 移除 st.container(border=True) 以避免舊版 Streamlit 報錯
-    with st.container():
+    with st.container(border=True):
         st.markdown("#### 😟 焦慮 1：怕買錯 / 不合她意")
         st.metric(label="Tru-Mi 的承諾", value="零風險承諾")
         st.markdown("""
@@ -209,8 +182,7 @@ with col_ob1:
         """, unsafe_allow_html=True)
 
 with col_ob2:
-    # 移除 st.container(border=True) 以避免舊版 Streamlit 報錯
-    with st.container():
+    with st.container(border=True):
         st.markdown("#### 😟 焦慮 2：萬一她很忙 / 怕拖太久")
         st.metric(label="Tru-Mi 的承諾", value="無限期承諾")
         st.markdown("""
@@ -226,18 +198,18 @@ with col_ob2:
 # ==========================================
 st.header("V. 預約諮詢與行動呼籲")
 
-# --- 諮詢引導區塊 ---
+# --- 改用「諮詢引導」取代「價格顯示」 ---
 st.markdown("""
-    <div class="consultation-box">
-        <h3 style="margin-top:0;">💎 每一份愛，都值得專屬對待</h3>
-        <p style="font-size: 1.1rem; line-height: 1.6; color: #555555;">
+    <div style="text-align: center; padding: 30px 20px; background-color: #FDF3F3; border-radius: 15px; margin-bottom: 30px;">
+        <h3 style="margin-top:0; color: #8E2121;">💎 每一份愛，都值得專屬對待</h3>
+        <p style="font-size: 1.1rem; line-height: 1.6; color: #5D4037;">
             Tru-Mi 深知，您的故事與預算是獨一無二的。<br>
             因此，我們不設定標準定價。
         </p>
-        <p style="font-size: 1.2rem; font-weight: bold; color: #C99E10; margin: 20px 0;">
+        <p style="font-size: 1.2rem; font-weight: bold; color: #B8860B; margin: 20px 0;">
             誠摯邀請您預約一次與設計師 Jessica 的深度諮詢。
         </p>
-        <p style="font-size: 1rem; color: #666666;">
+        <p style="font-size: 1rem; color: #666;">
             讓我們透過對話，了解您的需求，<br>為您量身打造最適合的「故事淬鍊」方案。
         </p>
     </div>
@@ -256,7 +228,7 @@ st.markdown("") # 空行間距
 # 最終 CTA 區塊
 st.markdown("""
     <div style="text-align: center; margin-top: 3rem;">
-        <h3 style="color: #00563F;">👉 立即啟動聖誕故事</h3>
+        <h3 style="color: #8E2121;">👉 立即啟動聖誕故事</h3>
         <p>別讓今年的心意，又變成一份普通的禮物。<br>先聊聊，再決定。</p>
     </div>
 """, unsafe_allow_html=True)
@@ -266,7 +238,7 @@ col_cta_spacer1, col_cta, col_cta_spacer2 = st.columns([1, 2, 1])
 
 with col_cta:
     # 使用 st.link_button 直接導向外部連結
-    # 連結已更新為新的 Line@ ID
+    # 按鈕文字已更新為「預約諮詢」
     st.link_button(
         label="🎄 預約「專屬方案諮詢」 (開啟故事旅程)",
         url=CTA_LINK,
@@ -276,8 +248,7 @@ with col_cta:
 
 # 頁尾
 st.markdown("""
-    <div style="text-align: center; margin-top: 5rem; font-size: 0.8rem; color: #999999;">
+    <div style="text-align: center; margin-top: 5rem; font-size: 0.8rem; color: #999;">
         © 2023-2025 Tru-Mi Jewelry. All Rights Reserved.
     </div>
 """, unsafe_allow_html=True)
-
